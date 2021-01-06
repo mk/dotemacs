@@ -1,7 +1,7 @@
 ;; FIXME might want to `add-to-list` instead
 (setq package-archives
       '(("gnu"          . "https://elpa.gnu.org/packages/")
-        ("marmalade"    . "https://marmalade-repo.org/packages/")
+        ;;("marmalade"    . "https://marmalade-repo.org/packages/")
         ("melpa"        . "https://melpa.org/packages/")
         ("melpa-stable" . "https://stable.melpa.org/packages/")
         ("org"          . "http://orgmode.org/elpa/"))) ;; no https :(
@@ -21,20 +21,17 @@
 ;;;;   - every 10 packages, or
 ;;;;   - if the package requires special config (e.g. pinning to a particular archive)
 (use-package ace-jump-mode     :ensure t)
-(use-package ack-and-a-half    :ensure t)
 (use-package ag                :ensure t)
 (use-package aggressive-indent :ensure t)
 (use-package bundler           :ensure t)
 (use-package caml              :ensure t)
 
-(use-package cider
-  :ensure t
-  :pin melpa-stable)
+(use-package cider                :ensure t)
 (use-package cider-eval-sexp-fu   :ensure t)
 
 (use-package clojure-mode         :ensure t)
 (use-package coffee-mode          :ensure t)
-(use-package company              :ensure t)
+(use-package company :ensure t)
 (use-package company-ghc          :ensure t)
 (use-package company-inf-ruby     :ensure t)
 (use-package company-go           :ensure t)
@@ -68,14 +65,11 @@
 (use-package markdown-mode        :ensure t)
 (use-package motion-mode          :ensure t)
 (use-package multiple-cursors     :ensure t)
+(use-package lsp-mode     :ensure t)
 
-(use-package org
-  :ensure t
-  :pin org)
+(use-package org             :ensure t)
 
-(use-package pallet          :ensure t)
 (use-package paredit         :ensure t)
-(use-package parenface-plus  :ensure t)
 (use-package pkg-info        :ensure t)
 (use-package powerline       :ensure t)
 (use-package pretty-symbols  :ensure t)
@@ -91,8 +85,7 @@
 (use-package smartparens     :ensure t)
 (use-package smex            :ensure t)
 (use-package tuareg          :ensure t)
-(use-package typopunct       :ensure t)
-(use-package undo-tree       :ensure t)
+(use-package undo-fu         :ensure t)
 
 (use-package uuid            :ensure t)
 (use-package visual-regexp   :ensure t)

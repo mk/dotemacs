@@ -56,8 +56,8 @@
 (powerline-center-theme)
 
 ;; dim the parentheses
-(require 'parenface-plus)
-(set-face-foreground 'paren-face "#666")
+;;(require 'parenface-plus)
+;;(set-face-foreground 'paren-face "#666")
 
 ;; customize company-mode's popup
 (let ((bg (face-attribute 'default :background)))

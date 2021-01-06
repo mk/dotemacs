@@ -42,6 +42,11 @@ Including indent-buffer, which should not be called automatically on save."
   (cleanup-buffer-safe)
   (indent-region (point-min) (point-max)))
 
+;; Delete trailing whitespace when saving code files
+(add-hook 'before-save-hook
+          (lambda ()
+            (cleanup-buffer-safe)))
+
 ;; these are bound to "kill-this-buffer" by default
 (global-set-key (kbd "s-K") nil)
 (global-set-key (kbd "s-k") nil)
@@ -76,6 +81,7 @@ Including indent-buffer, which should not be called automatically on save."
 (global-set-key (kbd "<S-s-return>") 'eval-defun)
 (define-key emacs-lisp-mode-map (kbd "<S-s-return>") 'eval-defun)
 
+
 ;; pretty print!
 (define-key emacs-lisp-mode-map (kbd "C-c C-p") 'pp-eval-last-sexp)
 (define-key lisp-interaction-mode-map (kbd "C-c C-p") 'pp-eval-last-sexp)
@@ -95,7 +101,7 @@ Including indent-buffer, which should not be called automatically on save."
      (dolist (binding (list (kbd "M-<up>") (kbd "M-<down>") (kbd "C-M-<left>") (kbd "C-M-<right>")))
        (define-key paredit-mode-map binding nil))
 
-     ;; not just in lisp mode(s) 
+     ;; not just in lisp mode(s)
      (global-set-key (kbd "C-M-<left>") 'backward-sexp)
      (global-set-key (kbd "C-M-<right>") 'forward-sexp)
 
@@ -107,7 +113,7 @@ Including indent-buffer, which should not be called automatically on save."
      (global-set-key (kbd "M-]") 'paredit-close-square-and-newline)
      (global-set-key (kbd "M-}") 'paredit-close-curly-and-newline)
 
-	 (diminish 'paredit-mode)))
+     (diminish 'paredit-mode)))
 
 ;; Enable `paredit-mode' in the minibuffer, during `eval-expression'.
 ;; (defun conditionally-enable-paredit-mode ()
@@ -161,6 +167,37 @@ Including indent-buffer, which should not be called automatically on save."
 (define-key emacs-lisp-mode-map (kbd "C-c d") 'elisp-popup-doc)
 (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
 
+(setq read-process-output-max 10000000)
+
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         (clojure-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+
+(setq lsp-headerline-breadcrumb-enable nil)
+(setq lsp-modeline-code-actions-enable nil)
+(setq lsp-ui-sideline-enable nil)
+(setq lsp-ui-doc-enable nil)
+(setq lsp-enable-on-type-formatting nil)
+(setq lsp-enable-indentation nil)
+
+
+(setq lsp-file-watch-ignored-directories
+      (cl-union lsp-file-watch-ignored-directories
+                '(
+                  "[/\\\\]\\guix\\'"
+                  "[/\\\\]\\files\\'"
+                  "[/\\\\]\\exports\\'"
+                  "[/\\\\]\\.kaocha-stats\\'"
+                  "[/\\\\]\\.shadow-cljs\\'"
+                  "[/\\\\]journal/server/resources\\'"
+                  "[/\\\\]mnt/runner\\'")))
+
 ;; TODO binding?
 (defun eval-and-replace ()
   "Replace the preceding sexp with its value."
@@ -174,6 +211,7 @@ Including indent-buffer, which should not be called automatically on save."
 
 ;;; SCHEME
 (require 'geiser)
+(setq geiser-mit-binary "/usr/local/bin/mit-scheme")
 (setq geiser-active-implementations '(racket))
 (add-hook 'geiser-mode-hook
           '(lambda ()
@@ -190,11 +228,17 @@ Including indent-buffer, which should not be called automatically on save."
   '(progn
      (add-hook 'cider-mode-hook 'eldoc-mode)
      (add-hook 'cider-interaction-mode-hook 'eldoc-mode)
+
+     (define-key cider-browse-spec-mode-map (kbd "<M-.>") 'lsp-find-definition)
+     (define-key cider-browse-spec-mode-map (kbd "<C-c C-d>") 'lsp-ui-doc-glance)
      (setq cider-repl-print-length 1000)
      (setq cider-repl-use-clojure-font-lock t)
      (setq cider-repl-pop-to-buffer-on-connect nil)
      (setq nrepl-use-ssh-fallback-for-remote-hosts 't)
      (setq cider-use-overlays nil)))
+
+
+
 
 ;; I like this keybinding from Lighttable
 (eval-after-load 'clojure-mode
@@ -209,7 +253,7 @@ Including indent-buffer, which should not be called automatically on save."
 (require 'cider-eval-sexp-fu)
 (setq cider-eval-sexp-fu-flash-duration 0.2)
 
-;;;;;; HASKELL 
+;;;;;; HASKELL
 
 ;;;; Haskell
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
@@ -274,4 +318,3 @@ Including indent-buffer, which should not be called automatically on save."
 
 (require 'restclient)
 (define-key restclient-mode-map (kbd "<s-return>") 'restclient-http-send-current)
-
